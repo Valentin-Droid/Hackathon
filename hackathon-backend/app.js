@@ -38,14 +38,14 @@ app.get('/pdf', (req, res) => {
 });
 
 app.post('/pdf', (req, res) => {
-    const { file_name, file_type } = req.body;
+    const { file_name, file_type, file_content } = req.body;
 
-    if (!file_name || !file_type) {
-        return res.status(400).send('Les champs name et content sont requis.');
+    if (!file_name || !file_type || !file_content) {
+        return res.status(400).send('Les champs file_name, file_type et file_content sont requis.');
     }
 
-    const query = 'INSERT INTO pdf_files (file_name, file_type) VALUES (?, ?)';
-    db.query(query, [file_name, file_type], (err, results) => {
+    const query = 'INSERT INTO pdf_files (file_name, file_type, file_content) VALUES (?, ?)';
+    db.query(query, [file_name, file_type, file_content], (err, results) => {
         if (err) {
             console.error('Erreur lors de l\'insertion des données:', err);
             return res.status(500).send('Erreur lors de l\'insertion des données.');
