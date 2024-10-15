@@ -44,7 +44,7 @@ app.post('/pdf', (req, res) => {
         return res.status(400).send('Les champs file_name, file_type et file_content sont requis.');
     }
 
-    const query = 'INSERT INTO pdf_files (file_name, file_type, file_content) VALUES (?, ?)';
+    const query = 'INSERT INTO pdf_files (file_name, file_type, file_content) VALUES (?, ?, ?)';
     db.query(query, [file_name, file_type, file_content], (err, results) => {
         if (err) {
             console.error('Erreur lors de l\'insertion des données:', err);
