@@ -14,7 +14,14 @@ export async function POST(req) {
 
     const response = await client.chat.completions.create({
       messages: [
-        { role: "system", content: "You are a helpful assistant." },
+        {
+          role: "system",
+          content: `Je vais te fournir un extrait de texte ci-dessous. À partir de cet extrait, crée une question pertinente liée au contenu et donne une réponse complète. Retourne la question et la réponse dans le format JSON suivant :
+        {
+          "question": "La question générée à partir du texte",
+          "answer": "La réponse à cette question"
+        }`,
+        },
         { role: "user", content: question }, // Using the question sent in the request
       ],
       temperature: 1.0,
