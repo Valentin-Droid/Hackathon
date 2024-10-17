@@ -104,15 +104,12 @@ Voici un exemple d'utilisation du site où un utilisateur télécharge un fichie
 - **Conversion de PDF en texte** : Extraction automatique du contenu textuel des PDF.
 - **Génération de flashcards** : Utilisation de l'API OpenAI pour générer automatiquement des questions et des réponses à partir du contenu extrait.
 
-## Exemple d'utilisation
-
-Voici un exemple d'utilisation du site où un utilisateur télécharge un fichier PDF et génère automatiquement des flashcards interactives :
-
-![Exemple d'utilisation](./pdfToFlashCard.gif)
-
 ## Auteur
 
 [Valentin DRELON] - [valentin.drelon@ynov.com](mailto:valentin.drelon@ynov.com)
+
 [Kellian KAUFFMANN] - [kellian.kauffmann@ynov.com](mailto:kellian.kauffmann@ynov.com)
+
 [Anh Nguyen Hoang Phuong] - [hoangphuonganh.nguyen@ynov.com](mailto:hoangphuonganh.nguyen@ynov.com)
+
 [Luca CHABOISSIER] - [luca.chaboissier@ynov.com](mailto:luca.chaboissier@ynov.com)
