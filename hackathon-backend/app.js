@@ -86,28 +86,6 @@ app.post("/pdf", (req, res) => {
     });
 });
 
-app.post('/statsaddcards', (req, res) => {
-    const user = 'local';
-    //On utilise un user "local" pour avoir les stats globaux du site, sans gérer des sessions
-    //Mais on peut imaginer un futur où on rajoute des comptes utilisateur, et donc des stats personnalisé
-
-    const query = 'UPDATE site_stats SET cards_generate = cards_generate + 1 WHERE user = ?';
-
-    db.query(query, [user], (err, result) => {
-        if (err) {
-            console.error('Erreur lors de la mise à jour des données:', err);
-            res.status(500).send('Erreur lors de la mise à jour des données');
-            return;
-        }
-
-        if (result.affectedRows === 0) {
-            res.status(404).send("Utilisateur 'local' non trouvé");
-        } else {
-            res.send(`pdf_read pour l'utilisateur 'local' a été incrémenté`);
-        }
-    });
-});
-
 app.post('/statsaddpdf', (req, res) => {
     const user = 'local';
     //On utilise un user "local" pour avoir les stats globaux du site, sans gérer des sessions
@@ -172,45 +150,6 @@ app.get('/stats', (req, res) => {
         };
 
         res.json(stats);
-    });
-});
-
-
-app.post('/statsaddnote', (req, res) => {
-    const { note } = req.query;
-
-    if (note === undefined) {
-        return res.status(400).send('Le paramètre "note" est requis');
-    }
-
-    const noteValue = parseFloat(note);
-    if (isNaN(noteValue)) {
-        return res.status(400).send('La note doit être un nombre valide');
-    }
-
-    const user = 'local';
-    //On utilise un user "local" pour avoir les stats globaux du site, sans gérer des sessions
-    //Mais on peut imaginer un futur où on rajoute des comptes utilisateur, et donc des stats personnalisé
-
-    const query = `
-        UPDATE site_stats
-        SET total_note = total_note + ?, 
-            cards_evaluated = cards_evaluated + 1,
-            adv_notes = (total_note + ?) / (cards_evaluated + 1)
-        WHERE user = ?;
-    `;
-
-    db.query(query, [noteValue, noteValue, user], (err, result) => {
-        if (err) {
-            console.error('Erreur lors de la mise à jour des données:', err);
-            return res.status(500).send('Erreur lors de la mise à jour des données');
-        }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).send("Utilisateur 'local' non trouvé");
-        }
-
-        res.send(`La note a été ajoutée avec succès et adv_notes a été mis à jour`);
     });
 });
 
