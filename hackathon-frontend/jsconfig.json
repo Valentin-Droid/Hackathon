@@ -1,1 +1,8 @@
-npm install --save-dev @types/eslint @types/page @types/react-dom
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
