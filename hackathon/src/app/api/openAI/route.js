@@ -1,42 +1,61 @@
-import { NextResponse } from "next/server"; // Use NextResponse for the response
+import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const token = process.env["GITHUB_TOKEN"];
-const endpoint = "https://models.inference.ai.azure.com";
-const modelName = "gpt-4o-mini";
+const API_TOKEN = process.env["GITHUB_TOKEN"];
+const ENDPOINT = "https://models.inference.ai.azure.com";
+const MODEL_NAME = "gpt-4o-mini";
 
-// Named export for POST method in Next.js 13+ API route
+// Fonction pour traiter la requête POST
 export async function POST(req) {
   try {
-    const { question } = await req.json(); // Get the JSON body
+    const { question } = await req.json();
+    const client = createOpenAIClient();
 
-    const client = new OpenAI({ baseURL: endpoint, apiKey: token });
+    const openAIResponse = await fetchChatCompletion(client, question);
 
-    const response = await client.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content: `Je vais te fournir un extrait de texte ci-dessous. À partir de cet extrait, crée une question pertinente liée au contenu et donne une réponse complète. Retourne la question et la réponse dans le format JSON suivant :
+    return NextResponse.json({ result: openAIResponse });
+  } catch (error) {
+    return handleError();
+  }
+}
+
+// Fonction pour créer une instance du client OpenAI
+const createOpenAIClient = () => {
+  return new OpenAI({
+    baseURL: ENDPOINT,
+    apiKey: API_TOKEN,
+  });
+};
+
+// Fonction pour générer une réponse via OpenAI
+const fetchChatCompletion = async (client, question) => {
+  const response = await client.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content: `Je vais te fournir un extrait de texte ci-dessous. À partir de cet extrait, crée une question pertinente liée au contenu et donne une réponse concise. 
+        La longueur de la réponse doit être similaire à celle de la question. 
+        Retourne la question et la réponse dans le format JSON suivant :
         {
           "question": "La question générée à partir du texte",
           "answer": "La réponse à cette question"
         }`,
-        },
-        { role: "user", content: question }, // Using the question sent in the request
-      ],
-      temperature: 1.0,
-      top_p: 1.0,
-      max_tokens: 1000,
-      model: modelName,
-    });
+      },
+      { role: "user", content: question },
+    ],
+    temperature: 1.0,
+    top_p: 1.0,
+    max_tokens: 500, // Réduction du nombre maximal de tokens pour limiter la longueur de la réponse
+    model: MODEL_NAME,
+  });
 
-    // Return the response using NextResponse in Next.js 13+
-    return NextResponse.json({ result: response.choices[0].message.content });
-  } catch (error) {
-    // Return error response
-    return NextResponse.json(
-      { error: "Failed to process request" },
-      { status: 500 }
-    );
-  }
-}
+  return response.choices[0].message.content;
+};
+
+// Fonction pour gérer les erreurs
+const handleError = () => {
+  return NextResponse.json(
+    { error: "Failed to process request" },
+    { status: 500 }
+  );
+};
