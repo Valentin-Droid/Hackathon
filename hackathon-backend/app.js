@@ -86,28 +86,6 @@ app.post("/pdf", (req, res) => {
     });
 });
 
-app.post('/statsaddpdf', (req, res) => {
-    const user = 'local';
-    //On utilise un user "local" pour avoir les stats globaux du site, sans gérer des sessions
-    //Mais on peut imaginer un futur où on rajoute des comptes utilisateur, et donc des stats personnalisé
-
-    const query = 'UPDATE site_stats SET pdf_read = pdf_read + 1 WHERE user = ?';
-
-    db.query(query, [user], (err, result) => {
-        if (err) {
-            console.error('Erreur lors de la mise à jour des données:', err);
-            res.status(500).send('Erreur lors de la mise à jour des données');
-            return;
-        }
-
-        if (result.affectedRows === 0) {
-            res.status(404).send("Utilisateur 'local' non trouvé");
-        } else {
-            res.send(`pdf_read pour l'utilisateur 'local' a été incrémenté`);
-        }
-    });
-});
-
 app.post('/statsaddcards', (req, res) => {
     const user = 'local';
     //On utilise un user "local" pour avoir les stats globaux du site, sans gérer des sessions
