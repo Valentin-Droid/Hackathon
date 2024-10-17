@@ -63,9 +63,30 @@ app.get("/pdf", (req, res) => {
 });
 
 app.post("/pdf", (req, res) => {
-  const { file_name, file_content } = req.body;
+    const { file_name, file_content } = req.body;
 
-  app.post('/statsaddpdf', (req, res) => {
+    if (!file_name || !file_content) {
+        return res
+            .status(400)
+            .send("Les champs file_name et file_content sont requis.");
+    }
+
+    const query = "INSERT INTO pdf_files (file_name, file_content) VALUES (?, ?)";
+    db.query(query, [file_name, file_content], (err, results) => {
+        if (err) {
+            console.error("Erreur lors de l'insertion des données:", err);
+            return res.status(500).send("Erreur lors de l'insertion des données.");
+        }
+
+        res.status(201).json({
+            id: results.insertId,
+            file_name: file_name,
+            file_content: file_content,
+        });
+    });
+});
+
+app.post('/statsaddpdf', (req, res) => {
     const user = 'local';
     //On utilise un user "local" pour avoir les stats globaux du site, sans gérer des sessions
     //Mais on peut imaginer un futur où on rajoute des comptes utilisateur, et donc des stats personnalisé
@@ -169,32 +190,6 @@ app.post('/statsaddnote', (req, res) => {
 
         res.send(`La note a été ajoutée avec succès et adv_notes a été mis à jour`);
     });
-});
-
-
-
-app.post('/pdf', (req, res) => {
-    const { file_name, file_type, file_content } = req.body;
-
-  if (!file_name || !file_content) {
-    return res
-      .status(400)
-      .send("Les champs file_name et file_content sont requis.");
-  }
-
-  const query = "INSERT INTO pdf_files (file_name, file_content) VALUES (?, ?)";
-  db.query(query, [file_name, file_content], (err, results) => {
-    if (err) {
-      console.error("Erreur lors de l'insertion des données:", err);
-      return res.status(500).send("Erreur lors de l'insertion des données.");
-    }
-
-    res.status(201).json({
-      id: results.insertId,
-      file_name: file_name,
-      file_content: file_content,
-    });
-  });
 });
 
 
