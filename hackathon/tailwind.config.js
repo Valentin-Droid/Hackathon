@@ -93,6 +93,9 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
         rainbow: "rainbow var(--speed, 2s) infinite linear",
       },
+      rotate: {
+        "y-180": "180deg",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

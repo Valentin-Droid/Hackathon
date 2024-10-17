@@ -1,59 +1,66 @@
 "use client";
 
+import { FlipCard } from "@/components/flip-card";
 import { FileUpload } from "@/components/ui/file-upload";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useState } from "react";
 
+// Composant principal de téléchargement de fichier et affichage des réponses
 export default function FileUploadComponent() {
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [apiResponse, setApiResponse] = useState(null); // State to store API response
+  const [state, setState] = useState({
+    uploadedFiles: [],
+    apiResponse: null,
+  });
 
+  // Gestion de l'upload des fichiers
   const handleFileUpload = (files) => {
-    console.log("Uploaded files:", files);
-    setUploadedFiles(files);
+    setState((prevState) => ({ ...prevState, uploadedFiles: files }));
   };
 
-  const uploadPdf = async () => {
-    if (uploadedFiles.length === 0) {
+  // Fonction pour uploader le PDF et obtenir la question extraite
+  const handleUploadPdf = async () => {
+    if (!state.uploadedFiles.length) {
       alert("Veuillez sélectionner un fichier à uploader.");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", uploadedFiles[0]); // On suppose un seul fichier pour simplifier
-
     try {
-      const response = await fetch("http://localhost:3001/extract-pdf-text", {
-        method: "POST",
-        body: formData, // Envoie le fichier sous forme de FormData
-      });
-
-      if (!response.ok) {
-        throw new Error("L'upload du fichier a échoué.");
-      }
+      const file = state.uploadedFiles[0];
+      const response = await uploadFile(file);
 
       const data = await response.json();
-      setApiResponse(data.text); // Stocke la réponse texte extraite
-
-      // Maintenant que l'upload est terminé et que apiResponse est mis à jour, appelle getAnswer()
-      await getAnswer(data.text); // Passe le texte extrait à getAnswer()
+      await fetchAnswer(data.text);
     } catch (error) {
-      console.error("Erreur lors de l'upload:", error);
-      setApiResponse("Erreur: Impossible d'extraire le texte.");
+      handleError("Erreur: Impossible d'extraire le texte.", error);
     }
   };
 
-  const getAnswer = async (extractedText) => {
+  // Fonction pour faire l'upload du fichier
+  const uploadFile = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return fetch("http://localhost:3001/extract-pdf-text", {
+      method: "POST",
+      body: formData,
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error("L'upload du fichier a échoué.");
+      }
+      return response;
+    });
+  };
+
+  // Fonction pour obtenir la réponse de l'API OpenAI
+  const fetchAnswer = async (extractedText) => {
     try {
       const response = await fetch("/api/openAI", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           role: "system",
           content: "",
-          question: extractedText, // Utilise le texte extrait du PDF
+          question: extractedText,
         }),
       });
 
@@ -61,40 +68,59 @@ export default function FileUploadComponent() {
         throw new Error("Failed to fetch the API");
       }
 
-      const data = await response.json(); // Parse response as JSON
-      setApiResponse(data.result); // Stocke la réponse de l'API OpenAI dans apiResponse
+      const data = await response.json();
+      const parsedResult = parseApiResponse(data.result);
+      setState((prevState) => ({
+        ...prevState,
+        apiResponse: parsedResult,
+      }));
     } catch (error) {
-      console.error("Error fetching the API:", error);
-      setApiResponse("Error: Unable to get the answer.");
+      handleError("Impossible d'obtenir la réponse.", error);
     }
   };
 
+  // Fonction pour parser la réponse de l'API OpenAI
+  const parseApiResponse = (responseText) => {
+    const cleanedResult = responseText.replace(/```json|```/g, "").trim();
+    return JSON.parse(cleanedResult);
+  };
+
+  // Fonction pour gérer les erreurs et mettre à jour l'état
+  const handleError = (errorMessage, error) => {
+    console.error(errorMessage, error);
+    setState({
+      uploadedFiles: [],
+      apiResponse: { question: "Erreur", answer: errorMessage },
+    });
+  };
+
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h2 className="mb-4 text-2xl font-bold">Importé votre fichier</h2>
+    <div className="flex flex-col items-center max-w-md p-4 mx-auto mt-10">
+      {/* Section du téléchargement */}
+      <h2 className="mb-4 text-2xl font-bold text-center">
+        Importez votre fichier
+      </h2>
       <FileUpload
         onChange={handleFileUpload}
         maxFiles={1}
-        maxSize={1024 * 1024 * 10} // 10 MB
-        accept={["image/*", "application/pdf"]}
+        maxSize={1024 * 1024 * 10}
+        accept={["application/pdf"]}
       />
-      {uploadedFiles.length > 0 && (
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold">Uploaded Files:</h3>
-          <ul className="pl-5 list-disc">
-            {uploadedFiles.map((file, index) => (
-              <li key={index}>{file.name}</li>
-            ))}
-          </ul>
-        </div>
+
+      {/* Bouton centré, visible seulement si un fichier est uploadé */}
+      {state.uploadedFiles.length > 0 && (
+        <RainbowButton onClick={handleUploadPdf} className="mt-6">
+          Générer une flashcard
+        </RainbowButton>
       )}
-      <RainbowButton onClick={uploadPdf} className="mt-6">
-        Upload
-      </RainbowButton>
-      {apiResponse && (
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold">Response:</h3>
-          <p>{apiResponse}</p>
+
+      {/* FlipCard centré sous le bouton */}
+      {state.apiResponse && (
+        <div className="flex justify-center mt-8">
+          <FlipCard
+            frontContent={<p>{state.apiResponse.question}</p>}
+            backContent={<p>{state.apiResponse.answer}</p>}
+          />
         </div>
       )}
     </div>
