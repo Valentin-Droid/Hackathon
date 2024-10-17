@@ -67,10 +67,10 @@ const UploadContent = ({ files, isDragActive }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <p className="relative z-20 font-sans text-base font-bold text-neutral-700 dark:text-neutral-300">
-        Upload file
+        Déposez votre cours
       </p>
       <p className="relative z-20 mt-2 font-sans text-base font-normal text-neutral-400 dark:text-neutral-400">
-        Drag or drop your files here or click to upload
+        Glissez ou déposez vos fichiers ici
       </p>
       <FileList files={files} isDragActive={isDragActive} />
     </div>
