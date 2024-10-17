@@ -3,18 +3,25 @@
 import { FlipCard } from "@/components/flip-card";
 import { FileUpload } from "@/components/ui/file-upload";
 import { RainbowButton } from "@/components/ui/rainbow-button";
+import SparklesText from "@/components/ui/sparkles-text";
+import TypingAnimation from "@/components/ui/typing-animation";
+import "loaders.css/loaders.min.css";
 import { useState } from "react";
+import Loader from "react-loaders";
 
-// Composant principal de téléchargement de fichier et affichage des réponses
 export default function FileUploadComponent() {
   const [state, setState] = useState({
     uploadedFiles: [],
     apiResponse: null,
+    isLoading: false, // Ajout de l'état de chargement
   });
 
   // Gestion de l'upload des fichiers
   const handleFileUpload = (files) => {
-    setState((prevState) => ({ ...prevState, uploadedFiles: files }));
+    setState((prevState) => ({
+      ...prevState,
+      uploadedFiles: files,
+    }));
   };
 
   // Fonction pour uploader le PDF et obtenir la question extraite
@@ -24,14 +31,23 @@ export default function FileUploadComponent() {
       return;
     }
 
+    setState((prevState) => ({
+      ...prevState,
+      isLoading: true, // Active le mode chargement
+    }));
+
     try {
       const file = state.uploadedFiles[0];
       const response = await uploadFile(file);
-
       const data = await response.json();
       await fetchAnswer(data.text);
     } catch (error) {
       handleError("Erreur: Impossible d'extraire le texte.", error);
+    } finally {
+      setState((prevState) => ({
+        ...prevState,
+        isLoading: false, // Désactive le mode chargement
+      }));
     }
   };
 
@@ -91,15 +107,22 @@ export default function FileUploadComponent() {
     setState({
       uploadedFiles: [],
       apiResponse: { question: "Erreur", answer: errorMessage },
+      isLoading: false,
     });
   };
 
   return (
     <div className="flex flex-col items-center max-w-md p-4 mx-auto mt-10">
       {/* Section du téléchargement */}
-      <h2 className="mb-4 text-2xl font-bold text-center">
-        Importez votre fichier
-      </h2>
+      <SparklesText
+        text="Générer des flashcards"
+        className="items-center justify-center text-4xl font-bold"
+      />
+      <TypingAnimation
+        className="text-4xl font-bold text-black dark:text-white"
+        duration={80}
+        text="à partir de vos cours PDF"
+      />
       <FileUpload
         onChange={handleFileUpload}
         maxFiles={1}
@@ -114,8 +137,15 @@ export default function FileUploadComponent() {
         </RainbowButton>
       )}
 
-      {/* FlipCard centré sous le bouton */}
-      {state.apiResponse && (
+      {/* Loader visible pendant le chargement */}
+      {state.isLoading && (
+        <div className="flex justify-center mt-12">
+          <Loader type="ball-clip-rotate-multiple" active color="#F0F0F0" />
+        </div>
+      )}
+
+      {/* FlipCard centré sous le bouton une fois la réponse disponible */}
+      {state.apiResponse && !state.isLoading && (
         <div className="flex justify-center mt-8">
           <FlipCard
             frontContent={<p>{state.apiResponse.question}</p>}
