@@ -25,6 +25,19 @@ db.connect((err) => {
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+app.get("/pdf", (req, res) => {
+    const query = "SELECT * FROM pdf_files"; // Remplacez par le nom de votre table
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Erreur lors de la récupération des données:", err);
+            res.status(500).send("Erreur lors de la récupération des données");
+            return;
+        }
+        res.json(results);
+    });
+});
+
 app.post("/extract-pdf-text", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
@@ -133,6 +146,11 @@ app.post('/statsaddcards', (req, res) => {
             return;
         }
 
+        if (result.affectedRows === 0) {
+            res.status(404).send("Utilisateur 'local' non trouvé");
+        } else {
+            res.send(`pdf_read pour l'utilisateur 'local' a été incrémenté`);
+        }
     });
 });
 
@@ -241,31 +259,6 @@ app.post('/statsaddnote', (req, res) => {
         res.send(`La note a été ajoutée avec succès et adv_notes a été mis à jour`);
     });
 });
-
-
-app.get('/stats', (req, res) => {
-    const query = 'SELECT pdf_read, cards_generate, adv_notes FROM site_stats WHERE user = ?';
-
-    db.query(query, ['local'], (err, results) => {
-        if (err) {
-            console.error('Erreur lors de la récupération des statistiques:', err);
-            return res.status(500).json({ error: 'Erreur lors de la récupération des données' });
-        }
-
-        if (results.length === 0) {
-            return res.status(404).json({ message: "Aucune donnée trouvée pour l'utilisateur 'local'" });
-        }
-
-        const stats = {
-            pdf_read: results[0].pdf_read,
-            cards_generate: results[0].cards_generate,
-            adv_notes: results[0].adv_notes,
-        };
-
-        res.json(stats);
-    });
-});
-
 
 app.post('/statsaddnote', (req, res) => {
     const { note } = req.query;
