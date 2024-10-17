@@ -49,17 +49,28 @@ app.get('/', (req, res) => {
     res.send('Hello, World!');
 });
 
-app.get("/pdf", (req, res) => {
-  const query = "SELECT * FROM pdf_files";
+app.post("/pdf", (req, res) => {
+    const { file_name, file_content } = req.body;
 
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Erreur lors de la récupération des données:", err);
-      res.status(500).send("Erreur lors de la récupération des données");
-      return;
+    if (!file_name || !file_content) {
+        return res
+            .status(400)
+            .send("Les champs file_name et file_content sont requis.");
     }
-    res.json(results);
-  });
+
+    const query = "INSERT INTO pdf_files (file_name, file_content) VALUES (?, ?)";
+    db.query(query, [file_name, file_content], (err, results) => {
+        if (err) {
+            console.error("Erreur lors de l'insertion des données:", err);
+            return res.status(500).send("Erreur lors de l'insertion des données.");
+        }
+
+        res.status(201).json({
+            id: results.insertId,
+            file_name: file_name,
+            file_content: file_content,
+        });
+    });
 });
 
 app.post("/pdf", (req, res) => {
@@ -121,6 +132,10 @@ app.post('/statsaddcards', (req, res) => {
             res.status(500).send('Erreur lors de la mise à jour des données');
             return;
         }
+
+    });
+});
+
 app.post('/statsaddpdf', (req, res) => {
     const user = 'local';
     //On utilise un user "local" pour avoir les stats globaux du site, sans gérer des sessions
@@ -227,18 +242,6 @@ app.post('/statsaddnote', (req, res) => {
     });
 });
 
-
-
-app.post('/pdf', (req, res) => {
-    const { file_name, file_type, file_content } = req.body;
-
-        if (result.affectedRows === 0) {
-            res.status(404).send("Utilisateur 'local' non trouvé");
-        } else {
-            res.send(`cards_generate pour l'utilisateur 'local' a été incrémenté`);
-        }
-    });
-});
 
 app.get('/stats', (req, res) => {
     const query = 'SELECT pdf_read, cards_generate, adv_notes FROM site_stats WHERE user = ?';
