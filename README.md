@@ -1,5 +1,12 @@
 # Hackathon
 
+## Présentation du projet
+
+Découvrez une présentation vidéo de notre projet pour en savoir plus sur ses fonctionnalités et son fonctionnement.
+
+[Regarde la vidéo sur YouTube](https://www.youtube.com/watch?v=TAUEJZW0EBU)
+
+
 Ce dépôt contient deux parties principales :
 
 - **hackathon-frontend** : Le projet front-end pour l'interface utilisateur.
