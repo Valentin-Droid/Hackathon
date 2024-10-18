@@ -1,0 +1,25 @@
+{
+    "memos": [
+    {
+        "id": 1,
+        "title": "Introduction to JavaScript",
+        "content": "JavaScript is a versatile programming language used primarily for web development. It allows you to create dynamic and interactive web pages.",
+        "tags": ["JavaScript", "Web Development", "Programming"],
+        "created_at": "2023-10-01T10:00:00Z"
+    },
+    {
+        "id": 2,
+        "title": "Understanding React",
+        "content": "React is a JavaScript library for building user interfaces. It allows you to create reusable UI components and manage the state of your application efficiently.",
+        "tags": ["React", "JavaScript", "UI"],
+        "created_at": "2023-10-02T11:30:00Z"
+    },
+    {
+        "id": 3,
+        "title": "Node.js Basics",
+        "content": "Node.js is a runtime environment that allows you to run JavaScript on the server side. It is built on Chrome's V8 JavaScript engine and is used for building scalable network applications.",
+        "tags": ["Node.js", "JavaScript", "Backend"],
+        "created_at": "2023-10-03T14:45:00Z"
+    }
+]
+}
