@@ -117,7 +117,7 @@ Les endpoints suivants nécessitent une base de données (voir le readme du doss
 - **POST /statsaddpdf** : Qui permet de faire un +1 sur la statistique du nombre de pdf upload sur le site.
 - **POST /statsaddcards** : Qui permet de faire un +1 sur la statistique du nombre de cartes générées sur le site.
 - **POST /statsaddnote** : Qui permet de mettre à jour la moyenne des notes des cartes notées (pas encore mis en place sur le front, mais présent dans le back pour une future évolution du site).
-- **GET /stats** : Qui retourne des statistiques ur l'utilisation du site (présent dans le back pour une future évolution du front).
+- **GET /stats** : Qui retourne des statistiques sur l'utilisation du site (présent dans le back pour une future évolution du front).
 
 ## Auteur
 
