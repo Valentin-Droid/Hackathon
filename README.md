@@ -102,6 +102,22 @@ Voici un exemple d'utilisation du site où un utilisateur télécharge un fichie
 ### Fonctionnalités du backend
 
 - **Conversion de PDF en texte** : Extraction automatique du contenu textuel des PDF.
+- **Routes API pour gérer les données** : Des endpoints qui permettent de communiquer avec la base de données.
+
+### Endpoints du backend
+
+Endpoint obligatoire pour pouvoir générer une carte (fonctionne sans mise en place de base de données) :
+
+- **POST /extract-pdf-text** : Qui permet de convertir un fichier pdf en texte.
+
+Les endpoints suivants nécessitent une base de données (voir le readme du dossier hackathon-backend pour déployer la base de données en local si vous souhaitez tester ces endpoint via postman par exemple) mais non obligatoire pour utiliser le site dans sa V0.
+
+- **GET /pdf** : Qui permet de récupérer les pdf enregistrer en base.
+- **POST /pdf** : Qui permet d'enregistrer un pdf en base.
+- **POST /statsaddpdf** : Qui permet de faire un +1 sur la statistique du nombre de pdf upload sur le site.
+- **POST /statsaddcards** : Qui permet de faire un +1 sur la statistique du nombre de cartes générées sur le site.
+- **POST /statsaddnote** : Qui permet de mettre à jour la moyenne des notes des cartes notées (pas encore mis en place sur le front, mais présent dans le back pour une future évolution du site).
+- **GET /stats** : Qui retourne des statistiques ur l'utilisation du site (présent dans le back pour une future évolution du front).
 
 ## Auteur
 
