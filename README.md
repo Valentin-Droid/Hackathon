@@ -53,7 +53,11 @@ Voici un exemple d'utilisation du site où un utilisateur télécharge un fichie
    npm install
    ```
 
-4. Créez un fichier `.env.local` avec les variables nécessaires (si nécessaire).
+4. Créez un fichier `.env` avec les variables nécessaires :
+
+ ```bash
+ export GITHUB_TOKEN=""
+ ```
 
 5. Lancez le projet en mode développement :
 
