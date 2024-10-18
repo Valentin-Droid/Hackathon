@@ -55,9 +55,9 @@ Voici un exemple d'utilisation du site où un utilisateur télécharge un fichie
 
 4. Créez un fichier `.env` avec les variables nécessaires :
 
- ```bash
- export GITHUB_TOKEN=""
- ```
+   ```bash
+   export GITHUB_TOKEN=""
+   ```
 
 5. Lancez le projet en mode développement :
 
