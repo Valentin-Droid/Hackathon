@@ -72,7 +72,7 @@ Voici un exemple d'utilisation du site où un utilisateur télécharge un fichie
 - **Backend** :
   - [Node.js](https://nodejs.org/)
   - [Express.js](https://expressjs.com/)
-  - [OpenAI API](https://openai.com/) pour générer les questions et réponses.
+  - [MariaDB](https://mariadb.org/)
   - Outils de conversion PDF en texte.
 
 ### Installation et démarrage
@@ -102,7 +102,6 @@ Voici un exemple d'utilisation du site où un utilisateur télécharge un fichie
 ### Fonctionnalités du backend
 
 - **Conversion de PDF en texte** : Extraction automatique du contenu textuel des PDF.
-- **Génération de flashcards** : Utilisation de l'API OpenAI pour générer automatiquement des questions et des réponses à partir du contenu extrait.
 
 ## Auteur
 
